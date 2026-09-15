@@ -1,0 +1,82 @@
+name: rng
+version: 0.1.0
+spec: '0.1'
+kind: ip
+lang:
+- bsv
+- bh
+identity:
+  slug: rng-tapeout-bsv
+  display_name: Random number generator
+  summary: Health-tested bits from an external noise source, debiased into 
+    32-bit words. Not a certified entropy source.
+  category: peripheral
+  subcategories:
+  - rng
+  ip_family: rng
+  integration_profile:
+  - apb4-slave
+  maturity: simulated
+contract:
+  version: 1
+  ctrl:
+    shape: flat
+    aw: 8
+    dw: 32
+  irq:
+  - name: irq
+    kind: level
+params:
+  # 噪声源每位的最小熵估计，以十分之一位计。只能取 SP 800-90B 表 2 二值源一栏有的 2、4、6、8、10；
+  # 估计要来自对真实噪声源的评估，这里的默认值只是保守的起点
+  hTenths:
+    type: int
+    default: 4
+    range:
+    - 2
+    - 10
+emit:
+- kind: bsv
+  package: Rng
+  module: mkRng
+  config_type: RngCfg
+  interface: RngIfc
+  ctrl: regs
+  pins:
+  - name: pins
+    type: RngPins
+- kind: verilog-flat
+  bus: apb4
+deps:
+  hwcore: ^0.1
+  amba: ^0.1
+area:
+  base:
+    per: hTenths
+    points:
+      '2': 1131.2
+      '4': 1156.12
+      '10': 1125.6
+  margin: 0.0
+  model: points-additive
+  error:
+    bound: 0.0
+    sign: over
+    note: placeholder until the off-grid probes are measured
+  measured:
+  - at:
+      hTenths: 2
+    um2: 1131.2
+  - at:
+      hTenths: 4
+    um2: 1156.12
+  - at:
+      hTenths: 10
+    um2: 1125.6
+  corner:
+    tool: ecc
+    pdk: ics55
+    freq_mhz: 100
+    measured: '2026-09-15'
+    toolchain: bsc 2026.01 · yosys 0.68+195 · ecc 0.1.0a11
+    gen_digest: sha256:595bc715ae16cdd4

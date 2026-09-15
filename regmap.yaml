@@ -1,0 +1,30 @@
+ip: rng
+contract: { aw: 8, dw: 32 }
+base: 0x10013000
+size: 0x100
+regs:
+  - name: ctrl
+    offset: 0x00
+    desc: enable and interrupt enable; enabling again restarts the startup tests
+    fields:
+      - { name: en,  bits: "0:0", sw: rw, hw: r, reset: 0 }
+      - { name: ien, bits: "1:1", sw: rw, hw: r, reset: 0 }
+  # 标志由硬件自己记着、重新使能时清：软件读得到为什么停了，清掉就是重跑开机测试
+  - name: status
+    offset: 0x04
+    desc: a word is ready, the startup tests have passed, and which health test failed
+    fields:
+      - { name: valid,   bits: "0:0", sw: r, hw: w, volatile: true }
+      - { name: ready,   bits: "1:1", sw: r, hw: w, volatile: true }
+      - { name: rctfail, bits: "2:2", sw: r, hw: w, volatile: true }
+      - { name: aptfail, bits: "3:3", sw: r, hw: w, volatile: true }
+  - name: data
+    offset: 0x08
+    desc: conditioned random word; reading it takes the word
+    fields: [ { name: val, width: 32, sw: r, hw: w, volatile: true, swacc: true } ]
+  - name: cutoff
+    offset: 0x0C
+    desc: health test cutoffs computed from the entropy estimate
+    fields:
+      - { name: rct, bits: "15:0",  sw: r, hw: w, volatile: true }
+      - { name: apt, bits: "31:16", sw: r, hw: w, volatile: true }
