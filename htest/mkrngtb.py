@@ -71,7 +71,7 @@ verdict = (f"cutoffs rct {RCT} and apt {APT} match SP 800-90B, words wait for a 
 
 TEMPLATE = r'''package Rng@L@Tb;
 
-// 由 tb/mkrngtb.py 生成，勿手改。这一点：hTenths=@H@，截止值 rct @RCT@、apt @APT@，LFSR 种子 @SEED@
+// 由 htest/mkrngtb.py 生成，勿手改。这一点：hTenths=@H@，截止值 rct @RCT@、apt @APT@，LFSR 种子 @SEED@
 
 import StmtFSM::*;
 import ConfigReg::*;
